@@ -21,8 +21,8 @@ class ShoppingService {
     });
   }
 
-  void addShopingList(String itemName) {
-    _database.push().set({"name": itemName});
+  void addShoppingList(String itemName) {
+    _database.push().set({'name': itemName});
   }
 
   Future<void> removeShoppingList(String key) async {
