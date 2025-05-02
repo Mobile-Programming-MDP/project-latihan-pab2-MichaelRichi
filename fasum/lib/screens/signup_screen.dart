@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fasum/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -24,6 +26,10 @@ class _SignupScreenState extends State<SignupScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            TextField(
+              controller: _fullNameController,
+              decoration: const InputDecoration(labelText: 'Full Name'),
+            ),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
@@ -64,10 +70,19 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+      final newUser = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text);
+
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(newUser.user!.uid)
+          .set({
+        'fullName': _fullNameController.text,
+        'email': _emailController.text,
+        'createdAt': DateTime.now(),
+      });
+      // Jika pendaftaran berhasil, arahkan pengguna ke halaman masuk
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(

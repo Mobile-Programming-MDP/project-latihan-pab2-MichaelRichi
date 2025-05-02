@@ -1,0 +1,2 @@
+D:/KULIAH/SI61/Pengembangan Aplikasi Bergerak 2/project-latihan-pab2-MichaelRichi/fasum/android/app/.cxx/Debug/2o1j5f2l/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/KULIAH/SI61/Pengembangan Aplikasi Bergerak 2/project-latihan-pab2-MichaelRichi/fasum/android/app/.cxx/Debug/2o1j5f2l/armeabi-v7a/CMakeFiles/rebuild_cache.dir
