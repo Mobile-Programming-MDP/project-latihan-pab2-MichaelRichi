@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fasum/screens/add_post_screen.dart';
+import 'package:fasum/screens/detail_screen.dart';
 import 'package:fasum/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,7 @@ class HomeScreen extends StatelessWidget {
     await FirebaseAuth.instance.signOut();
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const SigninScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const SigninScreen()),
     );
   }
 
@@ -49,28 +48,62 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection("posts")
-              //.orderBy('createdAt', descending: true)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return Center(child: CircularProgressIndicator());
+        stream:
+            FirebaseFirestore.instance
+                .collection("posts")
+                //.orderBy('createdAt', descending: true)
+                .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
 
-            final posts = snapshot.data!.docs;
+          final posts = snapshot.data!.docs;
 
-            return ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final data = posts[index].data();
-                final imageBase64 = data['image'];
-                final description = data['description'];
-                final createdAtStr = data['createdAt'];
-                final fullName = data['fullName'] ?? 'Anonim';
+          return ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final data = posts[index].data();
+              final imageBase64 = data['image'];
+              final description = data['description'];
+              final createdAtStr = data['createdAt'];
+              final fullName = data['fullName'] ?? 'Anonim';
+              final latitude = data['latitude'];
+              final longitude = data['longitude'];
+              final category = data['category'] ?? 'Lainnya';
 
-                //parse ke DateTime
-                final createdAt = DateTime.parse(createdAtStr);
-                return Card(
+              DateTime createdAt;
+              if (createdAtStr is Timestamp) {
+                createdAt = createdAtStr.toDate();
+              } else if (createdAtStr is String) {
+                createdAt = DateTime.parse(createdAtStr);
+              } else {
+                createdAt = DateTime.now(); // Default to now if parsing fails
+              }
+
+              //parse ke DateTime
+              final createdAtValue = data['createdAt'];
+              String heroTag =
+                  'fasum-image-${createdAt.millisecondsSinceEpoch}';
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => DetailScreen(
+                            imageBase64: imageBase64,
+                            description: description,
+                            createdAt: createdAt,
+                            fullName: fullName,
+                            latitude: 0.0,
+                            longitude: 0.0,
+                            category: "Jalan Rusak",
+                            heroTag: heroTag,
+                          ),
+                    ),
+                  );
+                },
+                child: Card(
                   margin: const EdgeInsets.all(10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -81,15 +114,20 @@ class HomeScreen extends StatelessWidget {
                       if (imageBase64 != null)
                         ClipRRect(
                           borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(10)),
-                          child: Image.memory(base64Decode(imageBase64),
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 200),
+                            top: Radius.circular(10),
+                          ),
+                          child: Image.memory(
+                            base64Decode(imageBase64),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 200,
+                          ),
                         ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -99,7 +137,9 @@ class HomeScreen extends StatelessWidget {
                                 Text(
                                   formatTime(createdAt),
                                   style: const TextStyle(
-                                      fontSize: 12, color: Colors.grey),
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 Text(
                                   fullName,
@@ -115,22 +155,26 @@ class HomeScreen extends StatelessWidget {
                             Text(
                               description ?? '',
                               style: const TextStyle(fontSize: 16),
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                );
-              },
-            );
-          }),
+                ),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => AddPostScreen()));
-          },
-          child: const Icon(Icons.add)),
+        onPressed: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => AddPostScreen()));
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
