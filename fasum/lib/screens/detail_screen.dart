@@ -62,9 +62,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   tag: widget.heroTag,
                   child: Image.memory(
                     base64Decode(widget.imageBase64),
-                    fit: BoxFit.cover,
-                    height: 250,
                     width: double.infinity,
+                    height: 250,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Positioned(
@@ -87,73 +87,90 @@ class _DetailScreenState extends State<DetailScreen> {
                     style: IconButton.styleFrom(backgroundColor: Colors.black),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //Kiri : Kategori dan waktu
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      //Kiri : kategori dan waktu
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.category,
-                                      size: 20,
-                                      color: Colors.red,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      widget.category,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                const Icon(
+                                  Icons.category,
+                                  size: 20,
+                                  color: Colors.red,
                                 ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.access_time,
-                                      size: 20,
-                                      color: Colors.red,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      createdAtFormatted,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                SizedBox(width: 4),
+                                Text(
+                                  widget.category,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          //Kanan : Icon Map
-                          IconButton(
-                            onPressed: openMap,
-                            icon: const Icon(
-                              Icons.map,
-                              size: 38,
-                              color: Colors.lightGreen,
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  size: 20,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  createdAtFormatted,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            tooltip: "Buka di Google Map",
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      //Kanan : icon map
+                      IconButton(
+                        onPressed: openMap,
+                        icon: const Icon(
+                          Icons.map,
+                          size: 38,
+                          color: Colors.lightGreen,
+                        ),
+                        tooltip: "Buka di Google Map",
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  Text(
+                    widget.description,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Lokasi",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "${widget.latitude}, ${widget.longitude}",
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
