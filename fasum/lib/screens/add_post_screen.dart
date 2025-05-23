@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
@@ -218,6 +219,38 @@ class _AddPostScreenState extends State<AddPostScreen> {
         _latitude = null;
         _longitude = null;
       });
+    }
+  }
+
+  Future<void> sendNotificationToTopic(String body, String senderName) async {
+    final url = Uri.parse(
+      'https://fasum-cloud-weld.vercel.app/send-to-topic',
+    ); //ganti dengan url vercel masing-masing
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "topic": "berita-fasum",
+        "title": "🔔 Laporan Baru",
+        "body": body,
+        "senderName": senderName,
+        "senderPhotoUrl":
+            "https://t3.ftcdn.net/jpg/03/53/83/92/360_F_353839266_8yqhN0548cGxrl4VOxngsiJzDgrDHxjG.jpg",
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('✅ Notifikasi berhasil dikirim')),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Gagal kirim notifikasi: ${response.body}')),
+        );
+      }
     }
   }
 
