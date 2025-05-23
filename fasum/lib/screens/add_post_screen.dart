@@ -287,6 +287,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
         'userId': uid,
       });
       if (!mounted) return;
+
+      sendNotificationToTopic(_descriptionController.text, fullName);
+
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Post uploaded successfully!')),
